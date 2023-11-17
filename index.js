@@ -12,7 +12,7 @@ app.post("/razorpay-webhook", (req, res) => {
 
   // Verify webhook signature (optional but recommended)
   // Replace 'your_webhook_secret' with your actual Razorpay webhook secret
-  const razorpayWebhookSecret = "your_webhook_secret";
+  const razorpayWebhookSecret = "ANKITFUKTE";
   const generatedSignature = calculateWebhookSignature(
     body,
     razorpayWebhookSecret
