@@ -68,33 +68,46 @@ function extractPhoneFromRazorpayPayload(razorpayPayload) {
   return razorpayPayload.payload.payment.entity.phone;
 }
 
-// Function to submit to Groove email form
 async function submitToGrooveForm(email, phone) {
   const grooveFormEndpoint =
-    "https://v1.gdapis.com/api/groovemail/saverawuserdetails";
+    "https://v1.gdapis.com/api/groovemail/saveuserdetails";
   const grooveFormApiKey = "d87Sx6volv5yNs0TpG7213z59r3U2WXF"; // Replace with your Groove Form API key
 
   try {
-    const response = await axios.post(
+    // Step 1: Simulate a request to get the initial HTML form
+    const initialResponse = await axios.get(grooveFormEndpoint);
+    const csrfToken = extractCsrfToken(initialResponse.data);
+
+    // Step 2: Simulate a request to submit the form with email and phone
+    const submitResponse = await axios.post(
       grooveFormEndpoint,
       {
+        _token: csrfToken,
         email: email,
-        phone_number: phone, // Make sure this matches the field name in your Groove form
-        // Add any additional parameters required by Groove form for submission
+        phone_number: phone,
+        // Add any additional parameters required by the form for submission
       },
       {
         headers: {
-          "Content-Type": "application/json",
+          "Content-Type": "application/x-www-form-urlencoded", // Set the correct content type
           Authorization: `Bearer ${grooveFormApiKey}`,
         },
       }
     );
 
-    console.log("Groove Form API response:", response.data);
+    console.log("Groove Form API response:", submitResponse.data);
   } catch (error) {
     console.error(
       "Error submitting to Groove Form:",
-      error
+      error.response ? error.response.data : error.message
     );
   }
+}
+
+function extractCsrfToken(html) {
+  // Implement a function to extract the CSRF token from the HTML
+  // This may involve using a library like cheerio or regular expressions
+  // Replace the implementation based on the actual HTML structure
+  const match = html.match(/<input type="hidden" name="_token" value="(.+?)">/);
+  return match ? match[1] : null;
 }
