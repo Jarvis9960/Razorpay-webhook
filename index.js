@@ -1,3 +1,4 @@
+const { default: axios } = require("axios");
 const express = require("express");
 
 const app = express();
@@ -7,7 +8,7 @@ const port = 3000;
 app.use(express.json());
 
 // Handle Razorpay webhook events
-app.post("/razorpay-webhook", (req, res) => {
+app.post("/razorpay-webhook", async (req, res) => {
   const body = req.body;
 
   // Verify webhook signature (optional but recommended)
@@ -27,6 +28,12 @@ app.post("/razorpay-webhook", (req, res) => {
   switch (body.event) {
     case "payment.captured":
       // Handle payment captured event
+      // Extract email from Razorpay payload
+      const email = extractEmailFromRazorpayPayload(body);
+
+      // Call Groove API to create a contact
+      await createGrooveContact(email);
+
       console.log("Payment Captured:", body.payload.payment.entity);
       break;
     // Add more cases for other events as needed
@@ -47,4 +54,39 @@ function calculateWebhookSignature(body, secret) {
   const hmac = require("crypto").createHmac("sha256", secret);
   hmac.update(JSON.stringify(body));
   return hmac.digest("hex");
+}
+
+// Function to extract email from Razorpay payload
+function extractEmailFromRazorpayPayload(razorpayPayload) {
+  // Modify this function based on your actual Razorpay payload structure
+  return razorpayPayload.payload.payment.entity.contact.email;
+}
+
+// Function to create Groove contact
+async function createGrooveContact(email) {
+  const grooveApiEndpoint = "https://api.groovehq.com/v1/customers";
+  const grooveApiKey = "d87Sx6volv5yNs0TpG7213z59r3U2WXF";
+
+  try {
+    const response = await axios.post(
+      grooveApiEndpoint,
+      {
+        email: email,
+        // Add any additional parameters required by Groove for creating a contact
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${grooveApiKey}`,
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+    console.log("Groove API response:", response.data);
+  } catch (error) {
+    console.error(
+      "Error creating Groove contact:",
+      error.response ? error.response.data : error.message
+    );
+  }
 }
