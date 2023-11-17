@@ -62,17 +62,16 @@ function extractEmailFromRazorpayPayload(razorpayPayload) {
   return razorpayPayload.payload.payment.entity.email;
 }
 
-// Function to create Groove contact
 async function createGrooveContact(email) {
-  const grooveApiEndpoint = "https://api.groovehq.com/v1/customers";
-  const grooveApiKey = "d87Sx6volv5yNs0TpG7213z59r3U2WXF";
+  const grooveApiEndpoint = "https://api.groove.com/v1/leads"; // Example endpoint (replace with the actual endpoint)
+  const grooveApiKey = "d87Sx6volv5yNs0TpG7213z59r3U2WXF"; // Replace with your Groove API key
 
   try {
     const response = await axios.post(
       grooveApiEndpoint,
       {
         email: email,
-        // Add any additional parameters required by Groove for creating a contact
+        // Add any additional parameters required by Groove for creating a lead
       },
       {
         headers: {
@@ -87,3 +86,4 @@ async function createGrooveContact(email) {
     console.error("Error creating Groove contact:", error);
   }
 }
+
