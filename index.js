@@ -84,9 +84,6 @@ async function createGrooveContact(email) {
 
     console.log("Groove API response:", response.data);
   } catch (error) {
-    console.error(
-      "Error creating Groove contact:",
-      error.response ? error.response.data : error.message
-    );
+    console.error("Error creating Groove contact:", error);
   }
 }
