@@ -11,7 +11,6 @@ app.use(express.json());
 app.post("/razorpay-webhook", async (req, res) => {
   const body = req.body;
 
-  console.log("webhook is running);
   // Verify webhook signature (optional but recommended)
   // Replace 'your_webhook_secret' with your actual Razorpay webhook secret
   const razorpayWebhookSecret = "ANKITFUKTE";
@@ -19,6 +18,8 @@ app.post("/razorpay-webhook", async (req, res) => {
     body,
     razorpayWebhookSecret
   );
+
+  console.log("webhook is running)
 
   if (generatedSignature !== req.get("x-razorpay-signature")) {
     // Signature mismatch, do not process the request
