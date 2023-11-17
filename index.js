@@ -99,7 +99,7 @@ async function submitToGrooveForm(email, phone) {
   } catch (error) {
     console.error(
       "Error submitting to Groove Form:",
-      error.response ? error.response.data : error.message
+      error
     );
   }
 }
