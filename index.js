@@ -31,10 +31,10 @@ app.post("/razorpay-webhook", async (req, res) => {
     case "payment.captured":
       // Handle payment captured event
       // Extract email from Razorpay payload
-      const email = extractEmailFromRazorpayPayload(body);
+      // const email = extractEmailFromRazorpayPayload(body);
 
-      // Call Groove API to create a contact
-      await createGrooveContact(email);
+      // // Call Groove API to create a contact
+      // await createGrooveContact(email);
 
       console.log("Payment Captured:", body.payload.payment.entity);
       break;
