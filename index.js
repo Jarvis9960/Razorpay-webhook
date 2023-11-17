@@ -12,7 +12,6 @@ app.post("/razorpay-webhook", async (req, res) => {
   const body = req.body;
 
   // Verify webhook signature (optional but recommended)
-  // Replace 'your_webhook_secret' with your actual Razorpay webhook secret
   const razorpayWebhookSecret = "ANKITFUKTE";
   const generatedSignature = calculateWebhookSignature(
     body,
@@ -28,11 +27,12 @@ app.post("/razorpay-webhook", async (req, res) => {
   switch (body.event) {
     case "payment.captured":
       // Handle payment captured event
-      // Extract email from Razorpay payload
+      // Extract email and phone from Razorpay payload
       const email = extractEmailFromRazorpayPayload(body);
+      const phone = extractPhoneFromRazorpayPayload(body);
 
-      // Call Groove API to create a contact
-      await createGrooveContact(email);
+      // Submit to Groove email form
+      await submitToGrooveForm(email, phone);
 
       console.log("Payment Captured:", body.payload.payment.entity);
       break;
@@ -62,28 +62,39 @@ function extractEmailFromRazorpayPayload(razorpayPayload) {
   return razorpayPayload.payload.payment.entity.email;
 }
 
-async function createGrooveContact(email) {
-  const grooveApiEndpoint = "https://api.groove.com/v1/leads"; // Example endpoint (replace with the actual endpoint)
-  const grooveApiKey = "d87Sx6volv5yNs0TpG7213z59r3U2WXF"; // Replace with your Groove API key
+// Function to extract phone from Razorpay payload
+function extractPhoneFromRazorpayPayload(razorpayPayload) {
+  // Modify this function based on your actual Razorpay payload structure
+  return razorpayPayload.payload.payment.entity.phone;
+}
+
+// Function to submit to Groove email form
+async function submitToGrooveForm(email, phone) {
+  const grooveFormEndpoint =
+    "https://v1.gdapis.com/api/groovemail/saverawuserdetails";
+  const grooveFormApiKey = "d87Sx6volv5yNs0TpG7213z59r3U2WXF"; // Replace with your Groove Form API key
 
   try {
     const response = await axios.post(
-      grooveApiEndpoint,
+      grooveFormEndpoint,
       {
         email: email,
-        // Add any additional parameters required by Groove for creating a lead
+        phone_number: phone, // Make sure this matches the field name in your Groove form
+        // Add any additional parameters required by Groove form for submission
       },
       {
         headers: {
-          Authorization: `Bearer ${grooveApiKey}`,
           "Content-Type": "application/json",
+          Authorization: `Bearer ${grooveFormApiKey}`,
         },
       }
     );
 
-    console.log("Groove API response:", response.data);
+    console.log("Groove Form API response:", response.data);
   } catch (error) {
-    console.error("Error creating Groove contact:", error);
+    console.error(
+      "Error submitting to Groove Form:",
+      error
+    );
   }
 }
-
