@@ -11,6 +11,8 @@ app.use(express.json());
 app.post("/razorpay-webhook", async (req, res) => {
   const body = req.body;
 
+  console.log("Webhook is running"); // Fixed the syntax error here
+
   // Verify webhook signature (optional but recommended)
   // Replace 'your_webhook_secret' with your actual Razorpay webhook secret
   const razorpayWebhookSecret = "ANKITFUKTE";
@@ -18,8 +20,6 @@ app.post("/razorpay-webhook", async (req, res) => {
     body,
     razorpayWebhookSecret
   );
-
-  console.log("webhook is running)
 
   if (generatedSignature !== req.get("x-razorpay-signature")) {
     // Signature mismatch, do not process the request
@@ -61,7 +61,7 @@ function calculateWebhookSignature(body, secret) {
 // Function to extract email from Razorpay payload
 function extractEmailFromRazorpayPayload(razorpayPayload) {
   // Modify this function based on your actual Razorpay payload structure
-  return razorpayPayload.payload.payment.entity.contact.email;
+  return razorpayPayload.payload.contact.email; // Fixed the typo here
 }
 
 // Function to create Groove contact
