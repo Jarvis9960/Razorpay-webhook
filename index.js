@@ -30,6 +30,21 @@ app.post("/razorpay-webhook", async (req, res) => {
       // Extract email and phone from Razorpay payload
       const email = extractEmailFromRazorpayPayload(body);
       const phone = extractPhoneFromRazorpayPayload(body);
+      
+       const response = await axios.post(
+        "https://v1.gdapis.com/api/groovemail/saverawuserdetails",
+        {
+          formid: "654f3d9f2bed781653581653",
+          ip_address: "false",
+          appUrl: "https://app.groove.cm",
+          name: "Ankit",
+          email,
+          phone,
+          // Add any other form fields as needed
+        }
+      );
+
+      console.log(response);
 
       console.log("Payment Captured:", body.payload.payment.entity);
       break;
