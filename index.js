@@ -31,17 +31,6 @@ app.post("/razorpay-webhook", async (req, res) => {
       const email = extractEmailFromRazorpayPayload(body);
       const phone = extractPhoneFromRazorpayPayload(body);
 
-      const response = await axios.post(
-        "https://app.groove.cm/groovemail/embed/app.js",
-        {
-          email,
-          phone,
-          // Add any other form fields as needed
-        }
-      );
-
-      console.log(response);
-
       console.log("Payment Captured:", body.payload.payment.entity);
       break;
     // Add more cases for other events as needed
