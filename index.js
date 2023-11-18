@@ -1,5 +1,9 @@
 const { default: axios } = require("axios");
 const express = require("express");
+const client = require("@sendgrid/mail");
+client.setApiKey(
+  "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"
+);
 
 const app = express();
 const port = 3000;
@@ -30,19 +34,17 @@ app.post("/razorpay-webhook", async (req, res) => {
       // Extract email and phone from Razorpay payload
       const email = extractEmailFromRazorpayPayload(body);
       const phone = extractPhoneFromRazorpayPayload(body);
-      
-       const response = await axios.post(
-        "https://v1.gdapis.com/api/groovemail/saverawuserdetails",
-        {
-          formid: "654f3d9f2bed781653581653",
-          ip_address: "false",
-          appUrl: "https://app.groove.cm",
-          name: "Ankit",
-          email,
-          phone,
-          // Add any other form fields as needed
-        }
-      );
+
+      // SendGrid API request to add contact to a list
+      const listId = "1a7d5737-dd07-4ede-ac4b-3dc60638fa6a";
+
+      const response = await client.request({
+        method: "PUT",
+        url: `/v3/marketing/lists/${listId}/contacts/${email}`,
+        body: {
+          list_ids: [listId],
+        },
+      });
 
       console.log(response);
 
@@ -60,6 +62,8 @@ app.post("/razorpay-webhook", async (req, res) => {
 app.listen(port, () => {
   console.log(`Server is running on ${port}`);
 });
+
+// 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
 
 // Function to calculate Razorpay webhook signature
 function calculateWebhookSignature(body, secret) {
