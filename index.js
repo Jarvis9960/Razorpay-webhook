@@ -31,8 +31,16 @@ app.post("/razorpay-webhook", async (req, res) => {
       const email = extractEmailFromRazorpayPayload(body);
       const phone = extractPhoneFromRazorpayPayload(body);
 
-      // Submit to Groove email form
-      await submitToGrooveForm(email, phone);
+      const response = await axios.post(
+        "https://app.groove.cm/groovemail/embed/app.js",
+        {
+          email,
+          phone,
+          // Add any other form fields as needed
+        }
+      );
+
+      console.log(response);
 
       console.log("Payment Captured:", body.payload.payment.entity);
       break;
@@ -66,48 +74,4 @@ function extractEmailFromRazorpayPayload(razorpayPayload) {
 function extractPhoneFromRazorpayPayload(razorpayPayload) {
   // Modify this function based on your actual Razorpay payload structure
   return razorpayPayload.payload.payment.entity.phone;
-}
-
-async function submitToGrooveForm(email, phone) {
-  const grooveFormEndpoint =
-    "https://v1.gdapis.com/api/groovemail/saveuserdetails";
-  const grooveFormApiKey = "d87Sx6volv5yNs0TpG7213z59r3U2WXF"; // Replace with your Groove Form API key
-
-  try {
-    // Step 1: Simulate a request to get the initial HTML form
-    const initialResponse = await axios.get(grooveFormEndpoint);
-    const csrfToken = extractCsrfToken(initialResponse.data);
-
-    // Step 2: Simulate a request to submit the form with email and phone
-    const submitResponse = await axios.post(
-      grooveFormEndpoint,
-      {
-        _token: csrfToken,
-        email: email,
-        phone_number: phone,
-        // Add any additional parameters required by the form for submission
-      },
-      {
-        headers: {
-          "Content-Type": "application/x-www-form-urlencoded", // Set the correct content type
-          Authorization: `Bearer ${grooveFormApiKey}`,
-        },
-      }
-    );
-
-    console.log("Groove Form API response:", submitResponse.data);
-  } catch (error) {
-    console.error(
-      "Error submitting to Groove Form:",
-      error
-    );
-  }
-}
-
-function extractCsrfToken(html) {
-  // Implement a function to extract the CSRF token from the HTML
-  // This may involve using a library like cheerio or regular expressions
-  // Replace the implementation based on the actual HTML structure
-  const match = html.match(/<input type="hidden" name="_token" value="(.+?)">/);
-  return match ? match[1] : null;
 }
