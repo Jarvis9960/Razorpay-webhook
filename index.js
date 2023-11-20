@@ -33,13 +33,13 @@ app.post("/razorpay-webhook", async (req, res) => {
 
   console.log(body)
   console.log(body.payload.payment)
-  if (body.payload.payment.entity.notes.payment_page_id !== paymentPageId) {
-    // Not the desired payment page ID, ignore the webhook
-    console.log("Webhook received but not processed for this payment page")
-    return res
-      .status(200)
-      .send("Webhook received but not processed for this payment page");
-  }
+  // if (body.payload.payment.entity.notes.payment_page_id !== paymentPageId) {
+  //   // Not the desired payment page ID, ignore the webhook
+  //   console.log("Webhook received but not processed for this payment page")
+  //   return res
+  //     .status(200)
+  //     .send("Webhook received but not processed for this payment page");
+  // }
 
   // Handle the webhook event based on the 'event' attribute in the request body
   switch (body.event) {
