@@ -1,6 +1,6 @@
 const { default: axios } = require("axios");
 const express = require("express");
-const client = require("@sendgrid/mail");
+const client = require("@sendgrid/client");
 client.setApiKey(
   "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"
 );
