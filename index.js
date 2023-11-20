@@ -49,7 +49,7 @@ app.post("/razorpay-webhook", async (req, res) => {
 
         console.log(response.statusCode, body);
       } catch (error) {
-        console.error("SendGrid API request error:", error.response.body);
+        console.error("SendGrid API request error:", error);
         return res.status(500).send("Error processing webhook");
       }
 
