@@ -25,6 +25,7 @@ app.post("/razorpay-webhook", async (req, res) => {
 
   if (generatedSignature !== req.get("x-razorpay-signature")) {
     // Signature mismatch, do not process the request
+    console.log("Webhook signature mismatch");
     return res.status(400).send("Webhook signature mismatch");
   }
 
@@ -32,6 +33,7 @@ app.post("/razorpay-webhook", async (req, res) => {
 
   if (body.payload.payment.entity.notes.payment_page_id !== paymentPageId) {
     // Not the desired payment page ID, ignore the webhook
+    console.log("Webhook received but not processed for this payment page")
     return res
       .status(200)
       .send("Webhook received but not processed for this payment page");
