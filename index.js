@@ -38,15 +38,20 @@ app.post("/razorpay-webhook", async (req, res) => {
       // SendGrid API request to add contact to a list
       const listId = "1a7d5737-dd07-4ede-ac4b-3dc60638fa6a";
 
-      const response = await client.request({
-        method: "PUT",
-        url: `/v3/marketing/lists/${listId}/contacts/${email}`,
-        body: {
-          list_ids: [listId],
-        },
-      });
+      try {
+        const [response, body] = await client.request({
+          method: "PUT",
+          url: `/v3/marketing/lists/${listId}/contacts/${email}`,
+          body: {
+            list_ids: [listId],
+          },
+        });
 
-      console.log(response);
+        console.log(response.statusCode, body);
+      } catch (error) {
+        console.error("SendGrid API request error:", error.response.body);
+        return res.status(500).send("Error processing webhook");
+      }
 
       console.log("Payment Captured:", body.payload.payment.entity);
       break;
