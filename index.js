@@ -2,7 +2,7 @@ const { default: axios } = require("axios");
 const express = require("express");
 const client = require("@sendgrid/client");
 client.setApiKey(
-  "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"
+  "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"
 );
 
 const app = express();
